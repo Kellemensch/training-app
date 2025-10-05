@@ -4,15 +4,18 @@ import { Training } from "@/lib/interfaces";
 import { useCallback, useEffect, useState } from "react";
 import ExerciseTimer from "./ExerciseTimer";
 import ExerciseRepetitions from "./ExerciseRepetitions";
+import { useRouter } from "next/navigation";
 
 interface StartTrainingClientProps {
     trainingId: string;
 }
 
 export default function StartTrainingClient({trainingId}: StartTrainingClientProps) {
+    const router = useRouter();
     const [training, setTraining] = useState<Training>();
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [trainingComplete, setTrainingComplete] = useState(false);
 
     useEffect(() => {
         const storedTrainings = localStorage.getItem("trainings");
@@ -24,13 +27,41 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
             }
         }
     }, [trainingId]);
+
+    const handleTrainingComplete = useCallback(() => {
+        if (!training) return;
+
+        setTrainingComplete(true);
+        const date = new Date();
+        const updatedTraining: Training = {
+            ...training,
+            history: [
+                ...(training?.history ?? []),
+                date
+            ]
+        };
+
+        setTraining(updatedTraining);
+        setTrainingComplete(true);
+
+        const storedTrainings = localStorage.getItem("trainings");
+        if (storedTrainings) {
+            const parsedTrainings: Training[] = JSON.parse(storedTrainings);
+            const updatedTrainings = parsedTrainings.map(t => 
+                t.id === trainingId ? updatedTraining : t
+            );
+            localStorage.setItem("trainings", JSON.stringify(updatedTrainings));
+        }
+    }, [training, trainingId]);
     
 
     const handleNextExercise = useCallback(() => {
         if (training && currentIndex < training.exercises.length -1) {
             setCurrentIndex(e => e + 1);
+        } else if (training && currentIndex === training.exercises.length - 1) {
+            handleTrainingComplete();
         }
-    }, [currentIndex, training]);
+    }, [currentIndex, training, handleTrainingComplete]);
 
     const handleExerciseComplete = useCallback(() => {
         handleNextExercise();
@@ -41,6 +72,15 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
     
     const currentExercise = training?.exercises[currentIndex];
     if (!currentExercise) return <p>Pas d'exercice dans cet entraînement</p>
+
+    if (trainingComplete) return (
+        <div>
+            <h1>Entraînement fini, bravo!</h1>
+            <button onClick={() => router.push("/")} className="cursor-pointer border">
+                Retour à l'accueil
+            </button>
+        </div>
+    )
 
     return (
         <div>

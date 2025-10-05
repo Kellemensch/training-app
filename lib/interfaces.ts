@@ -11,6 +11,7 @@ export interface Training {
     name: string;
     day: string;
     exercises: Exercise[];
+    history?: Date[];
 };
 
 export interface Program {

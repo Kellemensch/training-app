@@ -1,7 +1,12 @@
 import { Training } from "@/lib/interfaces";
 import Link from "next/link";
 
-export default function TrainingCard({training, param}) {
+interface TrainingCardProps {
+    training: Training;
+    param: string;
+}
+
+export default function TrainingCard({training, param}: TrainingCardProps) {
     let linkTo = `/training/${training.id}`;
     if (param === "start") {
         linkTo = `start-training/${training.id}`;

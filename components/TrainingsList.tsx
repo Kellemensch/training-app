@@ -4,7 +4,11 @@ import { Training } from "@/lib/interfaces";
 import { useEffect, useState } from "react";
 import TrainingCard from "./TrainingCard";
 
-export default function TrainingsList({param}) {
+interface TrainingListProps {
+    param: string;
+}
+
+export default function TrainingsList({param}: TrainingListProps) {
     const [trainings, setTrainings] = useState<Training[]>([]);
 
     useEffect(() => {

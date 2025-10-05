@@ -75,7 +75,7 @@ export default function ExerciseTimer({duration, onComplete}: ExerciseTimerProps
                 </button>
             </div>
             <div>
-                <button onClick={onComplete} className="cursor-pointer">
+                <button onClick={onComplete} className="cursor-pointer" >
                     Exercice suivant
                 </button>
             </div>
