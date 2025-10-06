@@ -12,6 +12,7 @@ export interface Training {
     day: string;
     exercises: Exercise[];
     history?: Date[];
+    emoji: string;
 };
 
 export interface Program {

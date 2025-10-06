@@ -10,7 +10,9 @@ export default function TrainingForm() {
         id: crypto.randomUUID(),
         name: "",
         day: "",
-        exercises: []
+        exercises: [],
+        history: [],
+        emoji: ""
     });
     const [exercises, setExercises] = useState<Exercise[]>([{
         id: crypto.randomUUID(),
@@ -28,6 +30,10 @@ export default function TrainingForm() {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
+        if (training.emoji === "") {
+            training.emoji = "🏋";
+            setTraining({...training, emoji: "🏋"});
+        }
         const newTraining = {...training, exercises: exercises,};
         localStorage.setItem("trainings", JSON.stringify([...trainings, newTraining]));
         alert("Entraînement créé !");
@@ -47,7 +53,14 @@ export default function TrainingForm() {
                     className="border rounded p-2"/>
             </div>
             <div>
-                <label className="block font-medium"></label>
+                <label className="block font-medium">Choisir un emoji pour cet entraînement:</label>
+                <input  
+                    type="text"
+                    value={training.emoji}
+                    placeholder="🏋"
+                    maxLength={1}
+                    onChange={(e) => setTraining({...training, emoji: e.target.value})}
+                    className="border rounded p-2 m-2"/>
             </div>
             <div className="space-y-6">
                 {exercises.map((exercise, index) => (
@@ -70,7 +83,7 @@ export default function TrainingForm() {
                             exercise.type = "Temps";
                             setExercises(newExercises);
                             }}
-                            className="cursor-pointer bg-green-200 hover:bg-green-300">
+                            className="cursor-pointer bg-green-200 hover:bg-green-300 p-3 m-2">
                                 Temps
                         </button>
                         <button onClick={() => {
@@ -79,7 +92,7 @@ export default function TrainingForm() {
                             exercise.type = "Repetitions"
                             setExercises(newExercises);
                             }}
-                            className="cursor-pointer bg-green-200 hover:bg-green-300">
+                            className="cursor-pointer bg-green-200 hover:bg-green-300 p-3 m-2">
                                 Répétitions
                         </button>
                         {exercise.type && exercise.type === "Temps" && (
@@ -124,7 +137,7 @@ export default function TrainingForm() {
                 </button>
                 <button
                     type="submit"
-                    className="cursor-pointer bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                    className="cursor-pointer bg-blue-600 text-white py-2 rounded hover:bg-blue-700 p-3"
                 >
                     Créer
                 </button>

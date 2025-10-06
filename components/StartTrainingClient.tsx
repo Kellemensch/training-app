@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import ExerciseTimer from "./ExerciseTimer";
 import ExerciseRepetitions from "./ExerciseRepetitions";
 import { useRouter } from "next/navigation";
+import ButtonCancelTraining from "./ButtonCancelTraining";
 
 interface StartTrainingClientProps {
     trainingId: string;
@@ -98,6 +99,8 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
                     <ExerciseRepetitions nb={parseInt(currentExercise.repetitions)} onComplete={handleNextExercise}/>
                 )}
             </div>
+
+            <ButtonCancelTraining/>
         </div>
     )
 }
