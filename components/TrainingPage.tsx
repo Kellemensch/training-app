@@ -28,12 +28,12 @@ export default function TrainingPage({id}: TrainingPageProps) {
                             ? (
                                 <div>
                                     {training?.exercises.map((exercise, index) => (
-                                        <>
-                                            <h3 key={index}>Exercice {index+1}</h3>
+                                        <div key={index}>
+                                            <h3>Exercice {index+1}</h3>
                                             <p>Type: {exercise.type}</p>
                                             {exercise.type === "Temps" && <p>Durée: {exercise.time}</p>}
                                             {exercise.type === "Repetitions" && <p>Répétitions: {exercise.repetitions}</p>}
-                                        </>
+                                        </div>
                                     ))}
                                 </div>
                             )

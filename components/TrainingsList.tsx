@@ -3,25 +3,26 @@
 import { Training } from "@/lib/interfaces";
 import { useEffect, useState } from "react";
 import TrainingCard from "./TrainingCard";
+import { useTrainings } from "@/hooks/useTrainings";
 
 interface TrainingListProps {
     param: string;
 }
 
 export default function TrainingsList({param}: TrainingListProps) {
-    const [trainings, setTrainings] = useState<Training[]>([]);
+    const {trainings, deleteTraining} = useTrainings();
 
-    useEffect(() => {
-        const storedTrainings = localStorage.getItem('trainings');
-        if (storedTrainings) setTrainings(JSON.parse(storedTrainings));
-    }, []);
+    const handleTrainingDeleted = (trainingId: string) => {
+        console.log("Training supprimé");
+        deleteTraining(trainingId);
+    }
 
     return (
         <div>
             {trainings.length != 0
                 ? (<div className="columns-5 gap-5">
                     {trainings.map((training) => (
-                        <TrainingCard key={training.id} training={training} param={param}/>
+                        <TrainingCard key={training.id} training={training} param={param} onTrainingDeleted={handleTrainingDeleted}/>
                     ))}
                 </div>)
                 : (<p>Aucun entraînement de créé.</p>)

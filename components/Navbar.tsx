@@ -37,8 +37,8 @@ export default function Navbar() {
                     <ul className="flex flex-col p-4 text-[#F8F8FF]">
                         {menuItems.map(({icon, text, link}, index) => {
                             return (
-                                <div key={index} className="py-4">
-                                    <li className="text-2xl flex cursor-pointer w-[80%] rounded-full mx-auto p-2 hover:text-gray-800 hover:bg-[#D8BFD8] hover:w-[90%] hover:font-bold" 
+                                <div key={index} className="py-2">
+                                    <li className="text-2xl flex cursor-pointer w-[80%] rounded-full mx-auto p-4 hover:text-gray-800 hover:bg-[#D8BFD8] hover:w-[90%] hover:font-bold transition-all duration-200" 
                                         onClick={() => {
                                             router.push(link);
                                         }}>
