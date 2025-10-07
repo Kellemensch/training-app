@@ -24,12 +24,15 @@ export default function TrainingPage({id}: TrainingPageProps) {
                 ? (
                     <>
                         <h2>Nom: {training.name}</h2>
+                        <p>Description: {training.description}</p>
+                        <p>Emoji: {training.emoji}</p>
                         {training?.exercises.length != 0 
                             ? (
                                 <div>
                                     {training?.exercises.map((exercise, index) => (
                                         <div key={index}>
                                             <h3>Exercice {index+1}</h3>
+                                            <p>Description: {exercise.description}</p>
                                             <p>Type: {exercise.type}</p>
                                             {exercise.type === "Temps" && <p>Durée: {exercise.time}</p>}
                                             {exercise.type === "Repetitions" && <p>Répétitions: {exercise.repetitions}</p>}

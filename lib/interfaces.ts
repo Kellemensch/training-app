@@ -1,6 +1,7 @@
 export interface Exercise {
     id: string;
     name: string;
+    description: string;
     type: string;
     repetitions?: string;
     time?: string;
@@ -9,6 +10,7 @@ export interface Exercise {
 export interface Training {
     id: string;
     name: string;
+    description: string;
     day: string;
     exercises: Exercise[];
     history?: Date[];

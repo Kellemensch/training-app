@@ -9,6 +9,7 @@ export default function TrainingForm() {
     const [training, setTraining] = useState<Training>({
         id: crypto.randomUUID(),
         name: "",
+        description: "",
         day: "",
         exercises: [],
         history: [],
@@ -17,6 +18,7 @@ export default function TrainingForm() {
     const [exercises, setExercises] = useState<Exercise[]>([{
         id: crypto.randomUUID(),
         name: "",
+        description: "",
         type: "",
         time: "",
         repetitions: "0"
@@ -40,64 +42,83 @@ export default function TrainingForm() {
         router.back();
     }
 
-    const addExercise = () => setExercises([...exercises, {id: crypto.randomUUID(), name: "", type: "", time: "", repetitions: ""}])
+    const addExercise = () => setExercises([...exercises, {id: crypto.randomUUID(), name: "", description: "", type: "", time: "", repetitions: ""}])
 
     return (
         <form onSubmit={handleSubmit}>
-            <div>
-                <label className="block font-medium">Nom de l'entraînement</label>
+            <div className="flex justify-start p-3">
+                <label className="flex-1 font-medium text-2xl mr-5">Nom de l'entraînement :</label>
                 <input
                     type="text"
                     value={training?.name}
+                    maxLength={100}
+                    required
                     onChange={(e) => setTraining({...training, name: e.target.value})}
-                    className="border rounded p-2"/>
+                    className="border flex-2 rounded p-2 ml-4 mr-50"/>
             </div>
-            <div>
-                <label className="block font-medium">Choisir un emoji pour cet entraînement:</label>
+            <div className="flex justify-start p-3">
+                <label className="flex-1 text-2xl mr-5 font-medium">Description :</label>
+                <textarea
+                    maxLength={200}
+                    value={training.description}
+                    onChange={(e) => setTraining({...training, description: e.target.value})}
+                    className="border flex-2 ml-4 mr-50 rounded p-2"/>
+            </div>
+            <div className="flex p-3">
+                <label className="flex text-2xl font-medium mr-5">Choisir un emoji pour cet entraînement:</label>
                 <input  
                     type="text"
                     value={training.emoji}
                     placeholder="🏋"
-                    maxLength={1}
+                    maxLength={2}
                     onChange={(e) => setTraining({...training, emoji: e.target.value})}
-                    className="border rounded p-2 m-2"/>
+                    className="border flex mr-50 w-auto rounded p-2 m-2"/>
             </div>
             <div className="space-y-6">
                 {exercises.map((exercise, index) => (
-                    <div key={index} className="border rounded-lg p-4">
-                        <label className="font-bold">Exercice {index+1}</label>
+                    <div key={exercise.id} className="border rounded-lg p-4 w-[95%] bg-gray-50">
+                        <h1 className="font-bold text-xl p-2">Exercice {index + 1} : {exercise.name}</h1>
                         <input 
                             type="text"
                             value={exercise.name}
+                            maxLength={100}
                             placeholder="Nom de l'exercice"
                             onChange={(e) => {
                                 const newExercises = [...exercises];
                                 newExercises[index].name = e.target.value;
                                 setExercises(newExercises);
                             }}
-                            className="rounded-lg border pb-3 mb-3"/>
-                        <label className="font-semibold">Type d'exercice</label>
-                        <button onClick={() => {
+                            className="rounded-lg border pb-3 mb-3 w-80"/>
+                        <div className="font-semibold text-lg p-1">Type d'exercice</div>
+                        <button type="button" 
+                            onClick={() => {
                             const newExercises = [...exercises];
                             newExercises[index].type = "Temps";
                             exercise.type = "Temps";
                             setExercises(newExercises);
                             }}
-                            className="cursor-pointer bg-green-200 hover:bg-green-300 p-3 m-2">
+                            className={`cursor-pointer p-4 m-2 rounded-lg ${exercise.type === "Temps"
+                                    ? "bg-green-600 border-2 border-green-700 text-white"
+                                    : "bg-rose-poudre hover:bg-rose-poudre-hover"
+                            }`}>
                                 Temps
                         </button>
-                        <button onClick={() => {
+                        <button type="button"
+                            onClick={() => {
                             const newExercises = [...exercises];
                             newExercises[index].type = "Repetitions";
-                            exercise.type = "Repetitions"
+                            exercise.type = "Repetitions";
                             setExercises(newExercises);
                             }}
-                            className="cursor-pointer bg-green-200 hover:bg-green-300 p-3 m-2">
+                            className={`cursor-pointer rounded-lg p-4 m-2 ${exercise.type === "Repetitions"
+                                    ? "bg-green-600 border-2 border-green-700 text-white"
+                                    : "bg-rose-poudre hover:bg-rose-poudre-hover"
+                            }`}>
                                 Répétitions
                         </button>
                         {exercise.type && exercise.type === "Temps" && (
                             <div className="flex">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Définir la durée (en minutes):</label>
+                                <label className="block mb-2 p-3 text-lg font-medium text-gray-900">Définir la durée (en minutes):</label>
                                 <input 
                                     type="time" 
                                     onChange={(e) => {
@@ -105,7 +126,7 @@ export default function TrainingForm() {
                                         newExercises[index].time = e.target.value;
                                         setExercises(newExercises);
                                     }}
-                                    className="rounded-none rounded-s-lg bg-gray-50 border text-gray-900 leading-none focus:ring-blue-500 focus:border-blue-500 block flex-1 w-full text-sm border-gray-300 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                    className="rounded-lg bg-gray-200 border text-gray-900 leading-none focus:ring-blue-500 focus:border-blue-500 flex w-auto text-lg border-gray-400 p-5 hover:bg-gray-400" 
                                     min="00:01" 
                                     max="60:00"
                                     value={exercise.time} 
@@ -113,8 +134,8 @@ export default function TrainingForm() {
                             </div>
                         )}
                         {exercise.type && exercise.type === "Repetitions" && (
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Définir le nombre de répétitions:</label>
+                            <div className="flex">
+                                <label className="block mb-2 p-3 text-lg font-medium text-gray-900">Définir le nombre de répétitions:</label>
                                 <input 
                                     type="number"
                                     value={exercise.repetitions}
@@ -123,6 +144,7 @@ export default function TrainingForm() {
                                         newExercises[index].repetitions = e.target.value;
                                         setExercises(newExercises);
                                     }}
+                                    className="rounded-lg bg-gray-200 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 flex w-auto text-lg border-gray-400 p-5 hover:bg-gray-300"
                                     required/>
                             </div>
                         )}
@@ -131,16 +153,18 @@ export default function TrainingForm() {
                 <button
                     type="button"
                     onClick={addExercise}
-                    className="px-4 py-2 rounded-lg border cursor-pointer hover:bg-gray-100 flex items-center gap-1"
+                    className="px-4 py-2 text-lg rounded-lg border cursor-pointer hover:bg-gray-200 flex items-center gap-1"
                 >
                     Ajouter un exercice
                 </button>
-                <button
-                    type="submit"
-                    className="cursor-pointer bg-blue-600 text-white py-2 rounded hover:bg-blue-700 p-3"
-                >
-                    Créer
-                </button>
+                <div className="text-center">
+                    <button
+                        type="submit"
+                        className="cursor-pointer text-2xl shadow-lg transition-all duration-200 bg-bleu-canard text-white p-5 rounded-2xl hover:bg-bleu-canard-hover"
+                    >
+                        Créer
+                    </button>
+                </div>
             </div>
         </form>
     )

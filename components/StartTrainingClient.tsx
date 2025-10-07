@@ -6,12 +6,15 @@ import ExerciseTimer from "./ExerciseTimer";
 import ExerciseRepetitions from "./ExerciseRepetitions";
 import { useRouter } from "next/navigation";
 import ButtonCancelTraining from "./ButtonCancelTraining";
+import { useTrainings } from "@/hooks/useTrainings";
 
 interface StartTrainingClientProps {
     trainingId: string;
 }
 
 export default function StartTrainingClient({trainingId}: StartTrainingClientProps) {
+    const {trainings, isLoading, updateTraining} = useTrainings();
+
     const router = useRouter();
     const [training, setTraining] = useState<Training>();
 
@@ -19,15 +22,18 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
     const [trainingComplete, setTrainingComplete] = useState(false);
 
     useEffect(() => {
-        const storedTrainings = localStorage.getItem("trainings");
-        if (storedTrainings) {
-            const parsedTrainings: Training[] = JSON.parse(storedTrainings);
-            const findTraining = parsedTrainings.find((e) => e.id === trainingId);
+        if (!isLoading && trainings.length > 0) {
+            console.log("Trainings disponibles:", trainings);
+            console.log("Recherche training ID:", trainingId);
+            
+            const findTraining = trainings.find((t) => t.id === trainingId);
+            console.log("Training trouvé:", findTraining);
+            
             if (findTraining) {
                 setTraining(findTraining);
             }
         }
-    }, [trainingId]);
+    }, [trainings, trainingId, isLoading]);
 
     const handleTrainingComplete = useCallback(() => {
         if (!training) return;
@@ -43,17 +49,9 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
         };
 
         setTraining(updatedTraining);
+        updateTraining(training.id, updatedTraining);
         setTrainingComplete(true);
-
-        const storedTrainings = localStorage.getItem("trainings");
-        if (storedTrainings) {
-            const parsedTrainings: Training[] = JSON.parse(storedTrainings);
-            const updatedTrainings = parsedTrainings.map(t => 
-                t.id === trainingId ? updatedTraining : t
-            );
-            localStorage.setItem("trainings", JSON.stringify(updatedTrainings));
-        }
-    }, [training, trainingId]);
+    }, [training, updateTraining]);
     
 
     const handleNextExercise = useCallback(() => {
@@ -67,6 +65,14 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
     const handleExerciseComplete = useCallback(() => {
         handleNextExercise();
     }, [handleNextExercise])
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <p>Chargement de l'entraînement...</p>
+            </div>
+        );
+    }
 
 
     if (!training) return <p>Cet entraînement n'a pas été trouvé</p>

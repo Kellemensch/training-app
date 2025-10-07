@@ -3,10 +3,24 @@ import { useEffect, useState } from "react";
 
 export function useTrainings() {
     const [trainings, setTrainings] = useState<Training[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const storedTrainings = localStorage.getItem("trainings");
-        if (storedTrainings) setTrainings(JSON.parse(storedTrainings));
+        const loadTrainings = () => {
+            try {
+                const storedTrainings = localStorage.getItem("trainings");
+                if (storedTrainings) {
+                    const parsedTrainings: Training[] = JSON.parse(storedTrainings);
+                    setTrainings(parsedTrainings);
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement des trainings:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadTrainings();
     }, []);
 
     const deleteTraining = (trainingId: string) => {
@@ -30,6 +44,7 @@ export function useTrainings() {
 
     return {
         trainings,
+        isLoading,
         deleteTraining,
         addTraining,
         updateTraining

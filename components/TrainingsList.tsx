@@ -20,7 +20,7 @@ export default function TrainingsList({param}: TrainingListProps) {
     return (
         <div>
             {trainings.length != 0
-                ? (<div className="columns-5 gap-5">
+                ? (<div className="columns-4 gap-5">
                     {trainings.map((training) => (
                         <TrainingCard key={training.id} training={training} param={param} onTrainingDeleted={handleTrainingDeleted}/>
                     ))}
