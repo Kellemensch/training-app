@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ButtonNextExercise from "./ButtonNextExercise";
 
 interface ExerciseTimerProps {
     duration: string;
@@ -56,28 +57,29 @@ export default function ExerciseTimer({duration, onComplete}: ExerciseTimerProps
 
     return (
         <div>
-            <h1>{formatTime(timeLeft)}</h1>
+            <h1 className="text-7xl p-10 font-bold">{formatTime(timeLeft)}</h1>
 
             <div>
                 {isRunning 
                     ? (
-                        <button onClick={handleStop} className="cursor-pointer">
+                        <button onClick={handleStop} 
+                            className="cursor-pointer text-2xl font-medium p-4 bg-rose-poudre hover:bg-rose-poudre-hover rounded-2xl mr-5">
                             Pause
                         </button>
                 )
                     : (
-                        <button onClick={handleStart} className="cursor-pointer">
+                        <button onClick={handleStart} 
+                            className="cursor-pointer text-2xl font-medium p-4 bg-bleu-canard hover:bg-bleu-canard-hover rounded-2xl ml-5">
                             Démarrer
                         </button>
                     )}
-                <button onClick={handleReset} className="cursor-pointer" disabled={timeLeft === parseTimeToSeconds(duration)}>
+                <button onClick={handleReset} 
+                    className="cursor-pointer p-4 text-2xl font-medium rounded-2xl ml-5 bg-jaune-moutarde hover:bg-jaune-moutarde-hover" disabled={timeLeft === parseTimeToSeconds(duration)}>
                         Reset
                 </button>
             </div>
             <div>
-                <button onClick={onComplete} className="cursor-pointer" >
-                    Exercice suivant
-                </button>
+                <ButtonNextExercise onComplete={onComplete}/>
             </div>
         </div>
     )

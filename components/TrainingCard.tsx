@@ -63,16 +63,16 @@ export default function TrainingCard({training, param, onTrainingDeleted}: Train
         <>
         <div onClick={() => router.push(linkTo)} 
                 className="flex break-inside-avoid rounded-2xl border border-gray-600 cursor-pointer text-gray-900 hover:text-white shadow-md bg-white hover:bg-bleu-canard hover:shadow-xl m-3 relative transition-all duration-200">
-            <div className="flex-1 flex items-center justify-center p-4 text-5xl">
+            <div className="flex-1 flex items-center justify-center p-4 text-3xl md:text-4xl lg:text-5xl">
                 {training.emoji}
             </div>
-            <div className="flex-1 flex flex-col relative p-3">
-                <div className="flex justify-between items-start mb-2">
-                    <h2 className="flex-1 pr-2 line-clamp-3 text-lg text-center font-bold mt-1">
+            <div className="flex flex-col relative p-5">
+                <div className="flex justify-between items-start pb-2">
+                    <h2 className="flex-1 pr-2 lg:line-clamp-3 line-clamp-1 md:line-clamp-2 text-lg lg:text-xl text-center font-bold mt-1">
                         {training.name}
                     </h2>
 
-                <div className="relative flex-shrink-0" ref={menuRef}>
+                <div className="relative " ref={menuRef}>
                     <div className="cursor-pointer ml-2 p-1 rounded text-black hover:text-white transition-colors"
                         onClick={(e) => {
                             e.stopPropagation();

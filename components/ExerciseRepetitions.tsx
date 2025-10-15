@@ -1,5 +1,7 @@
 "use client";
 
+import ButtonNextExercise from "./ButtonNextExercise";
+
 interface ExerciseRepetitionsProps {
     nb: number;
     onComplete: () => void;
@@ -8,10 +10,8 @@ interface ExerciseRepetitionsProps {
 export default function ExerciseRepetitions({nb, onComplete}: ExerciseRepetitionsProps) {
     return (
         <div>
-            <p>{nb} répétitions</p>
-            <button onClick={onComplete} className="cursor-pointer">
-                Exercice suivant
-            </button>
+            <p className="text-6xl font-bold p-10">{nb} répétitions</p>
+            <ButtonNextExercise onComplete={onComplete}/>
         </div>
     )
 }

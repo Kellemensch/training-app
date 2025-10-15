@@ -81,9 +81,9 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
     if (!currentExercise) return <p>Pas d'exercice dans cet entraînement</p>
 
     if (trainingComplete) return (
-        <div>
-            <h1>Entraînement fini, bravo!</h1>
-            <button onClick={() => router.push("/")} className="cursor-pointer border">
+        <div className="flex h-screen flex-col justify-center items-center align-middle">
+            <h1 className="text-7xl text-bleu-canard">Entraînement fini, bravo!</h1>
+            <button onClick={() => router.push("/")} className="w-fit cursor-pointer border mt-10 text-2xl font-semibold bg-rose-poudre hover:bg-rose-poudre-hover rounded-2xl p-3">
                 Retour à l'accueil
             </button>
         </div>
@@ -91,9 +91,10 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
 
     return (
         <div>
-            <p>Exercice {currentIndex + 1} sur {training.exercises.length}</p>
+            <h1 className="text-3xl lg:text-5xl p-3 font-bold">{training.name} {training.emoji}</h1>
+            <p className="p-3 mt-10 font-semibold text-3xl text-bleu-canard">Exercice {currentIndex + 1} sur {training.exercises.length}</p>
             <div className="text-center">
-                <h2>
+                <h2 className="p-3 font-semibold text-2xl text-bleu-canard">
                     {currentExercise.name}
                 </h2>
 
@@ -106,7 +107,9 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
                 )}
             </div>
 
+            <div className="mt-30">
             <ButtonCancelTraining/>
+            </div>
         </div>
     )
 }

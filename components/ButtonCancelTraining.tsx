@@ -20,7 +20,7 @@ export default function ButtonCancelTraining() {
         <>
             <button 
                 onClick={() => setModal(true)} 
-                className="cursor-pointer bg-red-500 hover:bg-red-600 text-black px-4 py-2 rounded-lg"
+                className="cursor-pointer text-xl bg-red-300 hover:bg-red-600 text-black px-4 py-2 rounded-lg"
             >
                 Annuler l'entraînement
             </button>

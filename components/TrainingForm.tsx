@@ -78,17 +78,30 @@ export default function TrainingForm() {
                 {exercises.map((exercise, index) => (
                     <div key={exercise.id} className="border rounded-lg p-4 w-[95%] bg-gray-50">
                         <h1 className="font-bold text-xl p-2">Exercice {index + 1} : {exercise.name}</h1>
-                        <input 
-                            type="text"
-                            value={exercise.name}
-                            maxLength={100}
-                            placeholder="Nom de l'exercice"
-                            onChange={(e) => {
-                                const newExercises = [...exercises];
-                                newExercises[index].name = e.target.value;
-                                setExercises(newExercises);
-                            }}
-                            className="rounded-lg border pb-3 mb-3 w-80"/>
+                        <div className="flex">
+                            <input 
+                                type="text"
+                                value={exercise.name}
+                                maxLength={100}
+                                placeholder="Nom de l'exercice"
+                                onChange={(e) => {
+                                    const newExercises = [...exercises];
+                                    newExercises[index].name = e.target.value;
+                                    setExercises(newExercises);
+                                }}
+                                className="rounded-lg border pb-3 mb-3 w-80 px-3"/>
+                            <input
+                                type="text"
+                                value={exercise.description}
+                                maxLength={200}
+                                placeholder="Description de l'exercice"
+                                onChange={(e) => {
+                                    const newExercises = [...exercises];
+                                    newExercises[index].description = e.target.value;
+                                    setExercises(newExercises);
+                                }}
+                                className="rounded-lg border pb-3 mb-3 w-100 px-3 ml-5"/>
+                        </div>
                         <div className="font-semibold text-lg p-1">Type d'exercice</div>
                         <button type="button" 
                             onClick={() => {
