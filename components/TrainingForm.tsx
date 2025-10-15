@@ -42,7 +42,15 @@ export default function TrainingForm() {
         router.back();
     }
 
-    const addExercise = () => setExercises([...exercises, {id: crypto.randomUUID(), name: "", description: "", type: "", time: "", repetitions: ""}])
+    const addExercise = () => setExercises([...exercises, {id: crypto.randomUUID(), name: "", description: "", type: "", time: "", repetitions: ""}]);
+
+    const deleteExercise = (exerciseId: string) => {
+        if (exercises.length > 1) {
+            setExercises(exercises.filter(ex => ex.id !== exerciseId));
+        } else {
+            alert("Vous devez avoir au moins un exercice");
+        }
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -76,7 +84,16 @@ export default function TrainingForm() {
             </div>
             <div className="space-y-6">
                 {exercises.map((exercise, index) => (
-                    <div key={exercise.id} className="border rounded-lg p-4 w-[95%] bg-gray-50">
+                    <div key={exercise.id} className="border rounded-lg p-2 w-[95%] bg-gray-50 relative">
+                        <div className="absolute right-2 top-2">
+                            <button
+                                type="button"
+                                className="cursor-pointer text-2xl text-gray-600 hover:text-red-600 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200"
+                                onClick={() => deleteExercise(exercise.id)}
+                            >
+                                &times;
+                            </button>
+                        </div>
                         <h1 className="font-bold text-xl p-2">Exercice {index + 1} : {exercise.name}</h1>
                         <div className="flex">
                             <input 
