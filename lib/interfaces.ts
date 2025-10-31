@@ -23,3 +23,13 @@ export interface Program {
     description: string;
     trainings: Training[];
 };
+
+export interface ScheduledTraining {
+    id: string;
+    trainingId: string;
+    trainingName: string;
+    date: string; // Format YYYY-MM-DD
+    notification: boolean;
+    notificationTime?: string;
+    emoji: string;
+}

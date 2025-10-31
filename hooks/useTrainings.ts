@@ -1,9 +1,11 @@
-import { Training } from "@/lib/interfaces";
+import { ScheduledTraining, Training } from "@/lib/interfaces";
 import { useEffect, useState } from "react";
 
 export function useTrainings() {
     const [trainings, setTrainings] = useState<Training[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [scheduledTrainings, setScheduledTrainings] = useState<ScheduledTraining[]>([]);
 
     useEffect(() => {
         const loadTrainings = () => {
@@ -19,8 +21,23 @@ export function useTrainings() {
                 setIsLoading(false);
             }
         };
+        
+        const loadScheduledTrainings = () => {
+            try {
+                const storedScheduled = localStorage.getItem("scheduled-trainings");
+                if (storedScheduled) {
+                    const parsedScheduled: ScheduledTraining[] = JSON.parse(storedScheduled);
+                    setScheduledTrainings(parsedScheduled);
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement des scheduled trainings:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
 
         loadTrainings();
+        loadScheduledTrainings();
     }, []);
 
     const deleteTraining = (trainingId: string) => {
@@ -30,11 +47,24 @@ export function useTrainings() {
         return true;
     };
 
+    const deleteScheduledTraining = (trainingId: string) => {
+        const updatedTrainings = scheduledTrainings.filter((t) => t.id != trainingId);
+        setScheduledTrainings(updatedTrainings);
+        localStorage.setItem("scheduled-trainings", JSON.stringify(updatedTrainings));
+        return true;
+    }
+
     const addTraining = (training: Training) => {
         const updatedTrainings = [...trainings, training];
         setTrainings(updatedTrainings);
         localStorage.setItem("trainings", JSON.stringify(updatedTrainings));
     };
+
+    const addScheduledTraining = (training: ScheduledTraining) => {
+        const updatedTrainings = [...scheduledTrainings, training];
+        setScheduledTrainings(updatedTrainings);
+        localStorage.setItem("scheduled-trainings", JSON.stringify(updatedTrainings));
+    }
 
     const updateTraining = (trainingId: string, updatedTraining: Training) => {
         const updatedTrainings = trainings.map((t) => t.id === trainingId ? updatedTraining : t);
@@ -42,11 +72,21 @@ export function useTrainings() {
         localStorage.setItem("trainings", JSON.stringify(updatedTrainings));
     };
 
+    const updateScheduledTraining = (trainingId: string, updatedTraining: ScheduledTraining) => {
+        const updatedTrainings = scheduledTrainings.map((t) => t.id === trainingId ? updatedTraining : t);
+        setScheduledTrainings(updatedTrainings);
+        localStorage.setItem("scheduled-trainings", JSON.stringify(updatedTrainings));
+    }
+
     return {
         trainings,
         isLoading,
         deleteTraining,
         addTraining,
-        updateTraining
+        updateTraining,
+        scheduledTrainings,
+        deleteScheduledTraining,
+        addScheduledTraining,
+        updateScheduledTraining
     };
 }

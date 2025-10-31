@@ -94,9 +94,12 @@ export default function StartTrainingClient({trainingId}: StartTrainingClientPro
             <h1 className="text-3xl lg:text-5xl p-3 font-bold">{training.name} {training.emoji}</h1>
             <p className="p-3 mt-10 font-semibold text-3xl text-bleu-canard">Exercice {currentIndex + 1} sur {training.exercises.length}</p>
             <div className="text-center">
-                <h2 className="p-3 font-semibold text-2xl text-bleu-canard">
+                <h2 className="p-3 font-semibold text-3xl text-bleu-canard">
                     {currentExercise.name}
                 </h2>
+                <p className="p-3 font-semibold text-2xl text-black">
+                    {currentExercise.description}
+                </p>
 
                 {currentExercise.type === "Temps" && currentExercise.time && (
                     <ExerciseTimer duration={currentExercise.time} onComplete={handleExerciseComplete}/>
