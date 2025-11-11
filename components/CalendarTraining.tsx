@@ -5,6 +5,8 @@ import { ScheduledTraining } from "@/lib/interfaces";
 import { useState } from "react";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import { Field, Label, Select } from "@headlessui/react";
+import { NotificationManager } from "./NotificationManager";
+import { NotificationDebug } from "./NotificationDebug";
 
 interface CalendarDay {
   date: Date;
@@ -62,8 +64,10 @@ export default function CalendarTraining() {
     const iterationDate = new Date(startDate);
     while (iterationDate <= endDate) {
       // Création d'une clé de date au format YYYY-MM-DD
-      const dateKey = iterationDate.toISOString().split("T")[0];
-
+      const year = iterationDate.getFullYear();
+      const month = String(iterationDate.getMonth() + 1).padStart(2, "0");
+      const day = String(iterationDate.getDate()).padStart(2, "0");
+      const dateKey = `${year}-${month}-${day}`;
       // Filtrage des entraînements pour ce jour
       const dayTrainings = scheduledTrainings.filter(
         (st) => st.date === dateKey
@@ -72,7 +76,7 @@ export default function CalendarTraining() {
       // Ajout du jour au calendrier
       calendar.push({
         date: new Date(iterationDate),
-        isCurrentMonth: iterationDate.getMonth() === month,
+        isCurrentMonth: iterationDate.getMonth() === currentDate.getMonth(),
         isCurrentDay:
           iterationDate.toDateString() === new Date().toDateString(),
         scheduledTrainings: dayTrainings,
@@ -112,7 +116,10 @@ export default function CalendarTraining() {
       return;
     }
 
-    const dateKey = selectedDate.toISOString().split("T")[0];
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(selectedDate.getDate()).padStart(2, "0");
+    const dateKey = `${year}-${month}-${day}`;
     const newScheduledTraining: ScheduledTraining = {
       id: crypto.randomUUID(),
       trainingId: selectedTraining,
@@ -124,13 +131,108 @@ export default function CalendarTraining() {
     };
 
     addScheduledTraining(newScheduledTraining);
+    if (enableNotification) {
+      scheduleTrainingNotification(newScheduledTraining);
+    }
 
     handleCancelButton();
   };
 
+  // Ajouter cette fonction dans votre composant
+  const scheduleTrainingNotification = (training: ScheduledTraining) => {
+    if (!selectedDate || !enableNotification) return;
+
+    const [hours, minutes] = notificationTime.split(":").map(Number);
+
+    // Utiliser la date exacte sélectionnée
+    const trainingDateTime = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      hours,
+      minutes
+    );
+
+    const notificationData = {
+      id: training.trainingId, // ou utiliser l'ID de l'entraînement planifié
+      title: `🎯 ${training.trainingName}`,
+      body: `Votre entraînement "${training.trainingName}" est prévu aujourd'hui`,
+      timestamp: trainingDateTime.getTime(),
+      date: training.date,
+      trainingId: training.id,
+    };
+
+    // Envoyer au Service Worker
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: "SCHEDULE_NOTIFICATION",
+        notification: notificationData,
+      });
+    } else {
+      console.error("Service Worker non disponible");
+    }
+
+    console.log("🔔 Notification planifiée:", {
+      pour: new Date(trainingDateTime).toLocaleString("fr-FR"),
+      // dans: Math.round((trainingDateTime - Date.now()) / 60000) + " minutes",
+      training: training.trainingName,
+    });
+
+    // Stocker pour persistance
+    storeNotificationInStorage(notificationData);
+  };
+
+  const storeNotificationInStorage = (notification: any) => {
+    const existingNotifications = JSON.parse(
+      localStorage.getItem("scheduled-notifications") || "[]"
+    );
+
+    const filteredNotifications = existingNotifications.filter(
+      (n: any) => n.id !== notification.id
+    );
+
+    localStorage.setItem(
+      "scheduled-notifications",
+      JSON.stringify([...filteredNotifications, notification])
+    );
+  };
+
   const handleDeleteScheduled = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+
+    // Trouver l'entraînement pour récupérer les infos de notification
+    const trainingToDelete = scheduledTrainings.find((st) => st.id === id);
+
     deleteScheduledTraining(id);
+
+    // Supprimer aussi la notification planifiée
+    if (trainingToDelete?.notification && trainingToDelete.notificationTime) {
+      cancelScheduledNotification(trainingToDelete.id);
+    }
+  };
+
+  const cancelScheduledNotification = (trainingId: string) => {
+    // Nettoyer le localStorage
+    const existingNotifications = JSON.parse(
+      localStorage.getItem("scheduled-notifications") || "[]"
+    );
+
+    const filteredNotifications = existingNotifications.filter(
+      (n: any) => n.trainingId !== trainingId
+    );
+
+    localStorage.setItem(
+      "scheduled-notifications",
+      JSON.stringify(filteredNotifications)
+    );
+
+    // Informer le Service Worker
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: "CANCEL_NOTIFICATION",
+        trainingId: trainingId,
+      });
+    }
   };
 
   if (isLoading) {
@@ -143,6 +245,8 @@ export default function CalendarTraining() {
 
   return (
     <div className="p-6 mx-auto max-w-7xl">
+      <NotificationManager />
+      <NotificationDebug />
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button

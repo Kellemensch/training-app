@@ -9,10 +9,17 @@ const withPWA = require('next-pwa') ({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
+  // Ajouter ces options pour le Service Worker
+  runtimeCaching: [
+    {
+      urlPattern: /\/api\/.*/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'api-cache',
+        networkTimeoutSeconds: 10,
+      },
+    },
+  ],
 });
 
-module.exports = withPWA({
-  reactStrictMode: true,
-});
-
-export default nextConfig;
+module.exports = withPWA(nextConfig);
