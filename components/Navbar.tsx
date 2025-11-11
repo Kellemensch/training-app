@@ -30,11 +30,11 @@ export default function Navbar() {
       text: "Entraînements",
       link: "/trainings",
     },
-    {
-      icon: <FaFlagCheckered size={25} className="mr-4" />,
-      text: "S'entraîner",
-      link: "/start-training-choice",
-    },
+    // {
+    //   icon: <FaFlagCheckered size={25} className="mr-4" />,
+    //   text: "S'entraîner",
+    //   link: "/start-training-choice",
+    // },
     {
       icon: <MdHistory size={25} className="mr-4" />,
       text: "Historique",
@@ -64,9 +64,9 @@ export default function Navbar() {
         className={`
                 fixed top-0 left-0 h-screen bg-bleu-canard z-40 shadow-sm transition-transform duration-300 ease-in-out ${
                   isMenuOpen ? "translate-x-0" : "-translate-x-full"
-                } lg:translate-x-0 w-100 lg:w-[25%]`}
+                } lg:translate-x-0 w-100 lg:w-[15%]`}
       >
-        <h2 className="text-2xl lg:text-4xl p-4 text-rose-poudre-hover font-extrabold">
+        <h2 className="text-2xl lg:text-4xl p-4 text-rose-poudre-hover font-extrabold border-b border-gray-600">
           Trainiii
         </h2>
         <nav>
@@ -75,7 +75,7 @@ export default function Navbar() {
               return (
                 <div key={index} className="py-2">
                   <li
-                    className="text-sm md:text-lg lg:text-2xl flex cursor-pointer w-[80%] rounded-full mx-auto p-3 lg:p-4 hover:text-gray-800 hover:bg-rose-poudre hover:w-[90%] hover:font-bold transition-all duration-200"
+                    className="text-sm md:text-lg lg:text-xl flex cursor-pointer w-full rounded-full mx-auto p-3 lg:p-4 hover:text-gray-800 hover:bg-rose-poudre hover:w-[90%] hover:font-bold transition-all duration-200"
                     onClick={() => {
                       router.push(link);
                       setIsMenuOpen(false);

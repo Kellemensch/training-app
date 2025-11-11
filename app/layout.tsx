@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Trainiii",
-  description: "A training dashboard to customize all your trainings and exercises and actually do them",
+  description:
+    "A training dashboard to customize all your trainings and exercises and actually do them",
 };
 
 export default function RootLayout({
@@ -26,12 +27,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body
-        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Suspense fallback={<Loading/>}>
-          {children}
-        </Suspense>
+      <body>
+        <Suspense fallback={<Loading />}>{children}</Suspense>
       </body>
     </html>
   );
