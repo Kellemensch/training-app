@@ -1,11 +1,12 @@
 "use client";
 
+import { useTrainings } from "@/hooks/useTrainings";
 import { Exercise, Training } from "@/lib/interfaces";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useState } from "react";
 
 export default function TrainingForm() {
-  const [trainings, setTrainings] = useState<Training[]>([]);
+  const { addTraining } = useTrainings();
   const [training, setTraining] = useState<Training>({
     id: crypto.randomUUID(),
     name: "",
@@ -28,11 +29,6 @@ export default function TrainingForm() {
   ]);
   const router = useRouter();
 
-  useEffect(() => {
-    const storedTrainings = localStorage.getItem("trainings");
-    if (storedTrainings) setTrainings(JSON.parse(storedTrainings));
-  }, []);
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (training.emoji === "") {
@@ -40,10 +36,7 @@ export default function TrainingForm() {
       setTraining({ ...training, emoji: "🏋" });
     }
     const newTraining = { ...training, exercises: exercises };
-    localStorage.setItem(
-      "trainings",
-      JSON.stringify([...trainings, newTraining])
-    );
+    addTraining(newTraining);
     alert("Entraînement créé !");
     router.back();
   };

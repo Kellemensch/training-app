@@ -11,7 +11,7 @@ export default function History() {
         <Trendings type="week" />
         <Trendings type="month" />
       </div>
-      <div className="border border-gray-400 rounded-xl w-auto h-screen m-2 p-4 bg-white">
+      <div className="border border-gray-400 rounded-xl w-auto h-auto m-2 p-4 bg-white">
         <h2 className="font-semibold text-gray-800 text-2xl p-2 mb-5">
           Activité récente
         </h2>
