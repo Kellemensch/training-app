@@ -9,110 +9,132 @@ import ButtonCancelTraining from "./ButtonCancelTraining";
 import { useTrainings } from "@/hooks/useTrainings";
 
 interface StartTrainingClientProps {
-    trainingId: string;
+  trainingId: string;
 }
 
-export default function StartTrainingClient({trainingId}: StartTrainingClientProps) {
-    const {trainings, isLoading, updateTraining} = useTrainings();
+export default function StartTrainingClient({
+  trainingId,
+}: StartTrainingClientProps) {
+  const { trainings, isLoading, updateTraining } = useTrainings();
 
-    const router = useRouter();
-    const [training, setTraining] = useState<Training>();
+  const router = useRouter();
+  const [training, setTraining] = useState<Training>();
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [trainingComplete, setTrainingComplete] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [trainingComplete, setTrainingComplete] = useState(false);
 
-    useEffect(() => {
-        if (!isLoading && trainings.length > 0) {
-            console.log("Trainings disponibles:", trainings);
-            console.log("Recherche training ID:", trainingId);
-            
-            const findTraining = trainings.find((t) => t.id === trainingId);
-            console.log("Training trouvé:", findTraining);
-            
-            if (findTraining) {
-                setTraining(findTraining);
-            }
-        }
-    }, [trainings, trainingId, isLoading]);
+  const [isPauseMode, setIsPauseMode] = useState(false);
 
-    const handleTrainingComplete = useCallback(() => {
-        if (!training) return;
+  useEffect(() => {
+    if (!isLoading && trainings.length > 0) {
+      console.log("Trainings disponibles:", trainings);
+      console.log("Recherche training ID:", trainingId);
 
-        setTrainingComplete(true);
-        const date = new Date();
-        const updatedTraining: Training = {
-            ...training,
-            history: [
-                ...(training?.history ?? []),
-                date
-            ]
-        };
+      const findTraining = trainings.find((t) => t.id === trainingId);
+      console.log("Training trouvé:", findTraining);
 
-        setTraining(updatedTraining);
-        updateTraining(training.id, updatedTraining);
-        setTrainingComplete(true);
-    }, [training, updateTraining]);
-    
-
-    const handleNextExercise = useCallback(() => {
-        if (training && currentIndex < training.exercises.length -1) {
-            setCurrentIndex(e => e + 1);
-        } else if (training && currentIndex === training.exercises.length - 1) {
-            handleTrainingComplete();
-        }
-    }, [currentIndex, training, handleTrainingComplete]);
-
-    const handleExerciseComplete = useCallback(() => {
-        handleNextExercise();
-    }, [handleNextExercise])
-
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <p>Chargement de l'entraînement...</p>
-            </div>
-        );
+      if (findTraining) {
+        setTraining(findTraining);
+      }
     }
+  }, [trainings, trainingId, isLoading]);
 
+  const handleTrainingComplete = useCallback(() => {
+    if (!training) return;
 
-    if (!training) return <p>Cet entraînement n'a pas été trouvé</p>
-    
-    const currentExercise = training?.exercises[currentIndex];
-    if (!currentExercise) return <p>Pas d'exercice dans cet entraînement</p>
+    setTrainingComplete(true);
+    const date = new Date();
+    const updatedTraining: Training = {
+      ...training,
+      history: [...(training?.history ?? []), date],
+    };
 
-    if (trainingComplete) return (
-        <div className="flex h-screen flex-col justify-center items-center align-middle">
-            <h1 className="text-7xl text-bleu-canard">Entraînement fini, bravo!</h1>
-            <button onClick={() => router.push("/")} className="w-fit cursor-pointer border mt-10 text-2xl font-semibold bg-rose-poudre hover:bg-rose-poudre-hover rounded-2xl p-3">
-                Retour à l'accueil
-            </button>
-        </div>
-    )
+    setTraining(updatedTraining);
+    updateTraining(training.id, updatedTraining);
+    setTrainingComplete(true);
+  }, [training, updateTraining]);
 
+  const handleNextExercise = useCallback(() => {
+    if (training && currentIndex < training.exercises.length - 1) {
+      setCurrentIndex((e) => e + 1);
+    } else if (training && currentIndex === training.exercises.length - 1) {
+      handleTrainingComplete();
+    }
+  }, [currentIndex, training, handleTrainingComplete]);
+
+  const handleExerciseComplete = useCallback(() => {
+    handleNextExercise();
+  }, [handleNextExercise]);
+
+  if (isLoading) {
     return (
-        <div>
-            <h1 className="text-3xl lg:text-5xl p-3 font-bold">{training.name} {training.emoji}</h1>
-            <p className="p-3 mt-10 font-semibold text-3xl text-bleu-canard">Exercice {currentIndex + 1} sur {training.exercises.length}</p>
-            <div className="text-center">
-                <h2 className="p-3 font-semibold text-3xl text-bleu-canard">
-                    {currentExercise.name}
-                </h2>
-                <p className="p-3 font-semibold text-2xl text-black">
-                    {currentExercise.description}
-                </p>
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Chargement de l'entraînement...</p>
+      </div>
+    );
+  }
 
-                {currentExercise.type === "Temps" && currentExercise.time && (
-                    <ExerciseTimer duration={currentExercise.time} onComplete={handleExerciseComplete}/>
-                )}
+  if (!training) return <p>Cet entraînement n'a pas été trouvé</p>;
 
-                {currentExercise.type == "Repetitions" && currentExercise.repetitions && (
-                    <ExerciseRepetitions nb={parseInt(currentExercise.repetitions)} onComplete={handleNextExercise}/>
-                )}
-            </div>
+  const currentExercise = training?.exercises[currentIndex];
+  if (!currentExercise) return <p>Pas d'exercice dans cet entraînement</p>;
 
-            <div className="mt-30">
-            <ButtonCancelTraining/>
-            </div>
-        </div>
-    )
+  if (trainingComplete)
+    return (
+      <div className="flex h-screen flex-col justify-center items-center align-middle">
+        <h1 className="text-7xl text-bleu-canard">Entraînement fini, bravo!</h1>
+        <button
+          onClick={() => router.push("/")}
+          className="w-fit cursor-pointer border mt-10 text-2xl font-semibold bg-rose-poudre hover:bg-rose-poudre-hover rounded-2xl p-3"
+        >
+          Retour à l'accueil
+        </button>
+      </div>
+    );
+
+  return (
+    <div>
+      <h1 className="text-3xl lg:text-5xl p-3 font-bold">
+        {training.name} {training.emoji}
+      </h1>
+      <p className="p-3 mt-10 font-semibold text-3xl text-bleu-canard">
+        Exercice {currentIndex + 1} sur {training.exercises.length}
+      </p>
+      <div className="text-center">
+        <h2 className="p-3 font-semibold text-5xl text-bleu-canard">
+          {isPauseMode
+            ? `Pause — ${currentExercise.pause}`
+            : currentExercise.name}{" "}
+        </h2>
+        <p className="p-3 font-semibold text-2xl text-black">
+          {isPauseMode ? "" : currentExercise.description}
+        </p>
+
+        {currentExercise.type === "Temps" && currentExercise.time && (
+          <ExerciseTimer
+            duration={currentExercise.time}
+            pause={currentExercise.pause ? currentExercise.pause : ""}
+            onComplete={handleExerciseComplete}
+            onPauseStart={() => setIsPauseMode(true)}
+            onPauseEnd={() => setIsPauseMode(false)}
+          />
+        )}
+
+        {currentExercise.type == "Repetitions" &&
+          currentExercise.repetitions && (
+            <ExerciseRepetitions
+              nb={parseInt(currentExercise.repetitions)}
+              pause={currentExercise.pause ? currentExercise.pause : ""}
+              onComplete={handleNextExercise}
+              onPauseStart={() => setIsPauseMode(true)}
+              onPauseEnd={() => setIsPauseMode(false)}
+            />
+          )}
+      </div>
+
+      <div className="mt-30">
+        <ButtonCancelTraining />
+      </div>
+    </div>
+  );
 }
